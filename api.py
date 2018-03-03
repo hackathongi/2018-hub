@@ -5,6 +5,7 @@ import requests
 from subprocess import call
 from requests.auth import HTTPBasicAuth
 import json
+from flask_cors import CORS
 
 app = Flask(__name__)
 api = Api(app)
@@ -169,4 +170,5 @@ api.add_resource(Fiware, '/fiware/<string:entity>/<string:action>')
 api.add_resource(Speech, '/speech/<string:text>')
 
 if __name__ == '__main__':
+    CORS(app)
     app.run(debug=True, host="0.0.0.0")
