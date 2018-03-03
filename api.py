@@ -38,18 +38,21 @@ registered_entities = {
         },
         
         'persiana': {
-            'aliases': ["persianes"],
+            'aliases': ["persianes", "persianas", "blind"],
             'type': 'blind_controller',
             'actions': {
                 'puja': {
+                    'aliases': ["pujar", "subir", "sube", "up"],
                     "var": "action",
                     "value": "puja",
                 },
                 'baixa': {
+                    'aliases': ["baixar", "baja", "bajar" , "down"],
                     "var": "action",
                     "value": "baixa",
                 },
                 'para': {
+                    'aliases': ["parar", "stop", "pause", "pausa", "pausar"],
                     "var": "action",
                     "value": "para",
                 }
@@ -131,6 +134,12 @@ class Voice(Resource):
         for action in registered_entities[entity]['actions'].keys():
             if action in text:
                 return action
+
+            # Review defined aliases //different ways to refer this component, different langs
+            for alias in registered_entities[entity]['actions'][action]['aliases']:
+                if alias in text:
+                    return action
+
         return False
 
     def process_voice(self, text):
@@ -139,12 +148,20 @@ class Voice(Resource):
         the_entity = self.identify_entity(text)
 
         # Try to match the action and notify fiware
+        message = "Entity not found"
         if the_entity:
             the_action = self.identify_actions(the_entity, text)
 
             if the_action:
                 fiware = Fiware()
                 return fiware.get(the_entity, the_action)
+            
+            message = "Action not found"
+        
+        return {
+            'error': True,
+            'message': message,
+        }
 
     def get(self, text):
         return self.process_voice(text)
