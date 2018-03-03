@@ -57,6 +57,15 @@ registered_entities = {
     }
 
 
+class Hub(Resource):
+    """
+    Return all configured entities and their related actions
+    """
+
+    def get(self):
+
+        return registered_entities
+
 
 class Speech(Resource):
     """
