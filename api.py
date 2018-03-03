@@ -163,18 +163,10 @@ class Speech(Resource):
         }
 
 
-class Test(Resource):
-    def get(self):
-        return {}
-
-    def post(self):
-        print (request.data)
-        return {"request": "done"}
-
-
-
+api.add_resource(Hub, '/hub/')
+api.add_resource(Voice, '/voice/<string:text>')
+api.add_resource(Fiware, '/fiware/<string:entity>/<string:action>')
 api.add_resource(Speech, '/speech/<string:text>')
-api.add_resource(Test, '/')
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
