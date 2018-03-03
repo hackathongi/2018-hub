@@ -117,18 +117,25 @@ class Voice(Resource):
 
     def identify_entity(self, text):
         for entity in registered_entities.keys():
-            if entity in text.split(" "):
+            if entity in text:
                 return entity
+
+            # Review defined aliases //different ways to refer this component, different langs
+            for alias in registered_entities[entity]['aliases']:
+                if alias in text:
+                    return entity
+
         return False
 
     def identify_actions(self, entity, text):
         for action in registered_entities[entity]['actions'].keys():
-            if action in text.split(" "):
+            if action in text:
                 return action
         return False
 
     def process_voice(self, text):
         # Try to match the entity
+        text = text.split(" ")
         the_entity = self.identify_entity(text)
 
         # Try to match the action and notify fiware
