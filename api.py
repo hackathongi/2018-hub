@@ -109,6 +109,40 @@ class Fiware(Resource):
         }
 
 
+class Voice(Resource):
+    """
+    Process an incoming string trying to match with an entity and their possible actions
+    """
+
+    def identify_entity(self, text):
+        for entity in registered_entities.keys():
+            if entity in text.split(" "):
+                return entity
+        return False
+
+    def identify_actions(self, entity, text):
+        for action in registered_entities[entity]['actions'].keys():
+            if action in text.split(" "):
+                return action
+        return False
+
+    def process_voice(self, text):
+        # Try to match the entity
+        the_entity = self.identify_entity(text)
+
+        # Try to match the action and notify fiware
+        if the_entity:
+            the_action = self.identify_actions(the_entity, text)
+
+            if the_action:
+                fiware = Fiware()
+                return fiware.get(the_entity, the_action)
+
+    def get(self, text):
+        return self.process_voice(text)
+
+
+
 class Speech(Resource):
     """
     Ask watson to reach a wav file with the provided text
