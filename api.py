@@ -23,22 +23,41 @@ ORION_PORT = 80
 
 registered_entities = {
         'bressol': {
-            'aliases': [],
+            'aliases': ["cuna"],
             'type': 'bebe',
             'actions': {
                 'encen': {
+                    'aliases': ["start", "encendre", "enceder", "enciende"],
                     "var": "estat",
                     "value": "on",
                 },
                 'para': {
+                    'aliases': ["parar", "stop", "pause", "pausa", "pausar"],
                     "var": "estat",
                     "value": "off",
                 }
             }
         },
-        
+
+        'computer': {
+            'aliases': ['ordinador', 'ordenador', 'pc'],
+            'type': 'computer',
+            'actions': {
+                'search': {
+                    'aliases': ["cercar", "busca", "buscar", "cerca", "lookup"],
+                    "var": "search",
+                    "value": "hackathon girona 2018",
+                },
+                'play': {
+                    'aliases': ["reprodueix", "reproduce", "reproducir", "reproduïr"],
+                    "var": "play",
+                    "value": "hendrix",
+                }
+            }
+        },
+                
         'persiana': {
-            'aliases': ["persianes", "persianas", "blind"],
+            'aliases': ["persianes", "persianas", "blind", "blinds"],
             'type': 'blind_controller',
             'actions': {
                 'puja': {
@@ -102,13 +121,14 @@ class Fiware(Resource):
         if r.status_code > 399:
             return {
                 'error': True,
-                'message': r.text,
+                'message_detail': r.text,
+                'message': f"Error executant acció '{action}' a '{entity}'",
                 'code': r.status_code
             }
 
         return {
             'error': False,
-            'message': f"Triggered action '{action}' at '{entity}'",
+            'message': f"Executant acció '{action}' a '{entity}'",
             'payload': payload,
         }
 
