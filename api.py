@@ -67,6 +67,48 @@ class Hub(Resource):
         return registered_entities
 
 
+class Fiware(Resource):
+
+    def __init__(self, host=ORION_SERVER, port=ORION_PORT):
+        self.host = host
+        self.port = port
+
+    @property
+    def url(self):
+        protocol = "http"
+        if self.port == 443:
+            protocol = "https"
+            
+        return f"{protocol}://{self.host}:{self.port}"
+
+    def get(self, entity, action):
+
+        values_to_update = registered_entities[entity]['actions'][action]
+        entities_url = self.url + f"/v2/entities/{entity}/attrs"
+
+        payload = {
+            values_to_update['var']: {
+                'value': values_to_update['value'],
+                'type': "String",
+            }
+        }
+
+        r = requests.patch(entities_url, headers={'Content-Type': 'application/json'}, data=json.dumps(payload) )
+        
+        if r.status_code > 399:
+            return {
+                'error': True,
+                'message': r.text,
+                'code': r.status_code
+            }
+
+        return {
+            'error': False,
+            'message': f"Triggered action '{action}' at '{entity}'",
+            'payload': payload,
+        }
+
+
 class Speech(Resource):
     """
     Ask watson to reach a wav file with the provided text
